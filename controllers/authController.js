@@ -65,6 +65,46 @@ const login = async (req, res) => {
         
     }
 }
+const getUser = async (req,res)=>{
+  try {
+    const users = await UserSchema.find({})
+    if(!users){
+      return res.status(400).json({error:true,message:"User not Found"});
+    };
+return res.status(200).json({error:false,message:"User Get Successful",users})
+  } catch (error) {
+    return res.status(500).json({error:true,message:"enternel server error"})
+  }
+}
+
+const logout = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    return res.status(200).json({ error: false, message: "Logout Successful" });
+  } catch (error) {
+    return res.status(500).json({ error: true, message: "Server error" });
+  }
+};
+const updateProfile = async (req, res) => {
+  try {
+    const { id } = req.params; // destructure kiya
+
+   return res.status(200).json({
+      message: "Params received",
+      id: id,
+    });
+  } catch (error) {
+return res.status(500).json({
+      error: true,
+      message: "Server error",
+    });
+  }
+};
 
 
-export { Register, login };
+
+export { Register, login,getUser,logout,updateProfile };
