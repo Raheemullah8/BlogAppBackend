@@ -10,6 +10,6 @@ router.post("/register",upload.single("profileImage"),Register)
 router.post("/login",login)
 router.get("/getuser",getUser)
 router.post("/logout",logout)
-router.patch("/users/:id",updateProfile)
+router.patch("/users/:id",upload.single("profileImage"),updateProfile)
 
 export default router;
