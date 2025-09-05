@@ -3,10 +3,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 import cors from "cors";
-import connectDB from "./config/db.js";
-import authRoutes from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import cloudinary from "./uitls/cloudinary.js";
+
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/auth.route.js";
+import categoryRoutes from "./routes/category.route.js"
 
 
 const app = express();
@@ -28,7 +30,8 @@ app.get("/", (req, res) => {
     res.send("Hello World!");
 })
 
-app.use("/api", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/category", categoryRoutes);
 
 
 app.listen(port, () => {

@@ -127,7 +127,23 @@ const updateProfile = async (req, res) => {
         });
     }
 };
+const deleteUser = async (req,res)=>{
+  try {
+    const {id} = req.params
+    const userToDelete = await UserSchema.findById(id);
+    if(!userToDelete) return res.status(404).json({error:false,message:"User Not Found"})
+    if(!userToDelete){
+      return res.status(400).json({error:true,message:"Admin can not Deleted"})
+    }
+    const deleteUser = await UserSchema.findByIdAndDelete({id})
+    return res.status(201).json({error:false,message:"User Delete successful",user:deleteUser})
+    
+
+  } catch (error) {
+    return res.status(500).json({error:true,message:"server error"})
+  }
+}
 
 
 
-export { Register, login, getUser, logout, updateProfile };
+export { Register, login, getUser, logout, updateProfile,deleteUser };
