@@ -9,6 +9,7 @@ import cloudinary from "./uitls/cloudinary.js";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.route.js";
 import categoryRoutes from "./routes/category.route.js"
+import postRoutes from "./routes/post.route.js"
 
 
 const app = express();
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
+app.use("/api/post", postRoutes);
 
 
 app.listen(port, () => {

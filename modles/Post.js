@@ -1,14 +1,32 @@
-import monoose from "mongoose";
-const { Schema, model } = monoose;
-const postSchema = new Schema({
-    title: String,
-    body: String,
-    username: String,
-    categories: {
-        type: Array,
-        default: []
+import mongoose  from "mongoose";
+
+const PostSchema = new mongoose.Schema({
+    title:{
+        type:String,
+        required:true,   
     },
-    photo: String
-}, { timestamps: true });
-const Post = model("Post", postSchema);
+    content:{
+        type:String,
+        required:true,
+    },
+    category:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref :"Category",
+        required:true,
+    },
+    postimage:{
+        type:String,
+        default:"",
+    },
+    author:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true,
+    }
+},
+{timestamps:true}
+);
+
+const Post = mongoose.models.Post || mongoose.model("Post", PostSchema);
+
 export default Post;
