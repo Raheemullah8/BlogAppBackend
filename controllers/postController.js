@@ -1,5 +1,5 @@
-import postSchema from "../modles/Post.js"
-import categorySchema from "../modles/Category.js"
+import postSchema from "../models/Post.js"
+import categorySchema from "../models/Category.js"
 
 
 const createPost = async (req,res)=>{
@@ -38,7 +38,7 @@ try {
 const getAllPost = async (req, res) => {
   try {
     const posts = await postSchema.find({})
-    .populate("category","name")
+    .populate("category","name slug")
     .populate('author', 'name email profileImage');
 
     return res.status(200).json({ error: false, posts });

@@ -5,7 +5,7 @@ dotenv.config();
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import cloudinary from "./uitls/cloudinary.js";
-
+import commentRoutes from "./routes/comment.route.js"
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.route.js";
 import categoryRoutes from "./routes/category.route.js"
@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/post", postRoutes);
+app.use("/api/comment", commentRoutes);
 
 
 app.listen(port, () => {
