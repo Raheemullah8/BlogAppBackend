@@ -18,7 +18,15 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+const corsOptions = {
+    origin:process.env.FRONTEND_URL, // Replace with your frontend URL
+    credentials: true,
+    optionSuccessStatus: 200,
+    
+}
+app.use(cookieParser(
+
+));
 
 
 cloudinary.config({
