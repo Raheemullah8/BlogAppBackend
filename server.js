@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 
 // Configuration and Utilities
 import connectDB from "./config/db.js";
-import cloudinary from "./uitls/cloudinary.js"; 
+import cloudinary from "./uitls/cloudinary.js";
 // NOTE: Make sure the path is correct: './uitls/cloudinary.js' or './utils/cloudinary.js'
 
 // Routes
