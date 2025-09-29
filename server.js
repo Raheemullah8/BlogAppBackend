@@ -15,15 +15,16 @@ import postRoutes from "./routes/post.route.js"
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const corsOptions = {
-    origin:process.env.FRONTEND_URL, // Replace with your frontend URL
-    credentials: true,
-    optionSuccessStatus: 200,
-    
-}
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend ka URL
+    credentials: true, // cookies allow
+  })
+);
 app.use(cookieParser(
 
 ));
@@ -48,4 +49,8 @@ app.use("/api/comment", commentRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
+});
+app.get("/test", (req, res) => {
+  console.log(req.cookies); // sari cookies print hongi
+  res.json({ cookies: req.cookies });
 });

@@ -23,7 +23,13 @@ const Register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 3600000
+});
+
 
     const user = new UserSchema({
       name,
@@ -34,7 +40,7 @@ const Register = async (req, res) => {
 
     await user.save();
 
-    return res.status(201).json({ message: "User registered successfully", user });
+    return res.status(201).json({ message: "User registered successfully", user,token });
 
   } catch (error) {
     return res.status(500).json({ message: "Server Error" });
@@ -57,7 +63,12 @@ const login = async (req, res) => {
     if (!ispasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.cookie("token", token, { httpOnly: true, maxAge: 3600000 });
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 3600000
+});
 
     return  res.status(200).json({ message: "Login successful", user, token });
 
@@ -100,10 +111,9 @@ const updateProfile = async (req, res) => {
         
         if (name) updateData.name = name;
         if (email) updateData.email = email;
-        if (password) {
-            updateData.password = await bcrypt.hash(password, 10);
-            updateData.password = password; // For now, assuming you are not hashing
-        }
+       if (password) {
+    updateData.password = await bcrypt.hash(password, 10);
+}
         if (req.file) {
             updateData.profileImage = req.file.path;
         }
@@ -133,11 +143,13 @@ const deleteUser = async (req,res)=>{
   try {
     const {id} = req.params
     const userToDelete = await UserSchema.findById(id);
-    if(!userToDelete) return res.status(404).json({error:false,message:"User Not Found"})
-    if(!userToDelete){
-      return res.status(400).json({error:true,message:"Admin can not Deleted"})
+       if (!userToDelete) {
+      return res.status(404).json({ error: true, message: "User Not Found" });
     }
-    const deleteUser = await UserSchema.findByIdAndDelete({id})
+    if(userToDelete.role==="admin"){
+      return res.status(400).json({error:true,message:"Admin can not be Deleted"})
+    }
+    const deleteUser = await UserSchema.findByIdAndDelete(id)
     return res.status(201).json({error:false,message:"User Delete successful",user:deleteUser})
     
 

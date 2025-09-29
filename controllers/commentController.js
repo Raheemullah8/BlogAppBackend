@@ -60,4 +60,30 @@ const deleteComment = async (req, res) => {
 }
 
 
-export { createComment, getComments,deleteComment };
+const getAllComment = async (req, res) => {
+  try {
+    const comments = await Comment.find()
+      .populate("author", "name profileImage")
+      .populate("post", "title")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      error: false,
+      message: "All comments fetched successfully",
+      comments,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+
+
+
+
+
+
+export { createComment, getComments,deleteComment,getAllComment};

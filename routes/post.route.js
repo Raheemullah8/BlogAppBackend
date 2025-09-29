@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/createpost',upload.single("postimage"),authMiddleWare,isAdmin,createPost)
 router.get('/getallpost',getAllPost)
-router.get('/getsinglepost/:id',getSinglePost)
+router.get('/getsinglepost/:id',authMiddleWare,getSinglePost)
 router.delete('/deletepost/:id',authMiddleWare,isAdmin,deletePost)
 
 

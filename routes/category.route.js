@@ -6,7 +6,7 @@ import authMiddleWare from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/createcategory",authMiddleWare,isAdmin,createCategory)
-router.get("/getcategory",authMiddleWare,isAdmin,getCategory)
+router.get("/getcategory",getCategory)
 router.delete("/deletecategory/:id",authMiddleWare,isAdmin,deleteCategory)
 router.patch("/updatecategory/:id",authMiddleWare,isAdmin,updateCategory)
 export default router
