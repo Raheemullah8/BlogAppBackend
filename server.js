@@ -47,10 +47,6 @@ app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
-app.get("/test", (req, res) => {
-  console.log(req.cookies); // sari cookies print hongi
-  res.json({ cookies: req.cookies });
-});
+app.listen(port,()=>{
+    console.log("Server is running on port 5000");
+})
