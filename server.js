@@ -5,7 +5,8 @@ import cookieParser from "cookie-parser";
 
 // Configuration and Utilities
 import connectDB from "./config/db.js";
-import cloudinary from "./uitls/cloudinary.js"; // Note: Check if the path is correct: 'uitls' or 'utils'
+import cloudinary from "./uitls/cloudinary.js"; 
+// NOTE: Make sure the path is correct: './uitls/cloudinary.js' or './utils/cloudinary.js'
 
 // Routes
 import authRoutes from "./routes/auth.route.js";
@@ -21,18 +22,17 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // 1. CORS Configuration
-// Using the FRONTEND_URL from the .env file (make sure the casing is correct)
 const corsOptions = {
     origin: process.env.FRONTEND_URL, 
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Recommended methods
-    credentials: true, // Allow cookies to be sent
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
 };
 app.use(cors(corsOptions));
 
 // 2. Middleware
-app.use(express.json()); // For parsing application/json
-app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
-app.use(cookieParser()); // For parsing cookies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // 3. Cloudinary Configuration
 cloudinary.config({
@@ -46,7 +46,7 @@ connectDB();
 
 // 5. Basic Test Route
 app.get("/", (req, res) => {
-    res.send("API is running...");
+    res.send("API is running successfully!");
 });
 
 // 6. API Routes
@@ -55,9 +55,7 @@ app.use("/api/category", categoryRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 
-// 7. Error Handling Middleware (Optional but recommended)
-// Add this section after all routes to catch any unhandled errors
-// This is a minimal example, you might want a dedicated errorHandler middleware
+// 7. Error Handling Middleware (Always put this last)
 app.use((err, req, res, next) => {
     console.error(err.stack);
     const statusCode = err.statusCode || 500;
@@ -68,8 +66,18 @@ app.use((err, req, res, next) => {
 });
 
 
-// 8. Start Server
-app.listen(port, () => {
-    console.log(`Server is running in ${process.env.NODE_ENV} mode on port ${port}`);
-    console.log(`Frontend URL: ${process.env.FRONTEND_URL}`);
-});
+// 8. SERVER START LOGIC (ESM EXPORT & CONDITIONAL LISTENING)
+// ==========================================================
+
+// **STEP A: Vercel Export (ES Module Way)**
+// Vercel aur Serverless Functions ke liye Express app ko export karte hain.
+export default app;
+
+// **STEP B: Local Listening**
+// Yeh code sirf local machine par chalega (development mode mein).
+// NODE_ENV check karne se yeh Vercel par run nahi hota.
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Server is running LOCALLY on port ${port}`);
+    });
+}
