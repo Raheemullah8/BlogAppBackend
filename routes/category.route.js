@@ -2,14 +2,14 @@ import express from "express";
 import isAdmin from "../middleware/isAdmin.js";
 import authMiddleWare from "../middleware/authMiddleware.js";
 
-// AGAR AAPKA FOLDER NAAM 'Controllers' HAI:
+// Yahan dekhiye: 'controllers' (chhotay huroof mein)
 import {
     updateCategory,
     createCategory,
     getCategory,
     deleteCategory
-} from "../Controllers/categoryController.js"; 
-//       ^^^^^^^^^^^^^ <--- C bada rakhein agar folder ka naam 'Controllers' hai
+} from "../controllers/categoryController.js"; 
+//       ^^^^^^^^^^^ <--- 'c' small, please!
 
 const router = express.Router();
 
