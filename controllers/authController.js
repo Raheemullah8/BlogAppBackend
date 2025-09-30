@@ -23,12 +23,13 @@ const Register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.cookie("token", token, {
+  res.cookie("token", token, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
-  maxAge: 3600000
+  secure: process.env.NODE_ENV === "production", // only HTTPS
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ✅ cross-site cookie
+  maxAge: 1000 * 60 * 60 * 24, // 1 day
 });
+
 
 
     const user = new UserSchema({
@@ -65,9 +66,9 @@ const login = async (req, res) => {
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 res.cookie("token", token, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
-  maxAge: 3600000
+  secure: process.env.NODE_ENV === "production", // only HTTPS
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ✅ cross-site cookie
+  maxAge: 1000 * 60 * 60 * 24, // 1 day
 });
 
     return  res.status(200).json({ message: "Login successful", user, token });
