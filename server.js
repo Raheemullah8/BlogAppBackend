@@ -4,8 +4,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 // Config and Utils
-import connectDB from "./config/db.js"; // This is an async function
-import cloudinary from "./uitls/cloudinary.js"; // Note: Check if the path is 'uitls' or 'utils'
+import connectDB from "./config/db.js"; 
+// Check: Note the path "uitls". If your folder is named 'utils', you should correct this line:
+import cloudinary from "./uitls/cloudinary.js"; 
 
 // Routes
 import authRoutes from "./routes/auth.route.js";
@@ -40,24 +41,26 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// 4. Server Initialization Function
+// --- CRITICAL FIX: Root Route ko SYNCHRONOUSLY define karna ---
+// Vercel ko server running dikhane ke liye yeh route abhi available hoga.
+app.get("/", (req, res) => {
+    res.send("API is running successfully 🚀");
+});
+// ------------------------------------------------------------------
+
+// 4. Server Initialization Function (Handles DB connection and sets up API routes)
 const startServer = async () => {
     try {
-        // IMPORTANT: Await the connection before setting up routes
+        // IMPORTANT: Await the connection before setting up routes that DEPEND on the DB
         await connectDB(); 
 
-        // 5. Test route (Only available if DB connection succeeds)
-        app.get("/", (req, res) => {
-            res.send("API is running successfully 🚀");
-        });
-
-        // 6. Routes
+        // 5. API Routes (These are mounted after DB connection starts)
         app.use("/api/auth", authRoutes);
         app.use("/api/category", categoryRoutes);
         app.use("/api/post", postRoutes);
         app.use("/api/comment", commentRoutes);
 
-        // 7. Error handler
+        // 6. Error handler (Remains the same)
         app.use((err, req, res, next) => {
             console.error(err.stack);
             const statusCode = err.statusCode || 500;
@@ -67,7 +70,7 @@ const startServer = async () => {
             });
         });
 
-        // 8. Local run only
+        // 7. Local run only (Remains the same)
         if (process.env.NODE_ENV !== "production") {
             app.listen(port, () => {
                 console.log(`Server running locally on port ${port}`);
@@ -76,14 +79,11 @@ const startServer = async () => {
 
     } catch (error) {
         console.error("FATAL SERVER STARTUP ERROR:", error.message);
-        // In a real Serverless environment, throwing here will cause the function to fail (which is desired).
-        // For local development, this makes the error visible.
     }
 };
 
-// Call the async function to start the logic
+// Call the async function to start the logic (DB connection & route mounting)
 startServer();
 
-// 👉 Export for Vercel (This must be synchronous and at the root)
-// Vercel handles the async initialization when it runs the serverless function.
+// 👉 Export for Vercel 
 export default app;
