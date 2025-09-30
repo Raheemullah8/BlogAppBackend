@@ -35,76 +35,41 @@ const getCookieOptions = (isLogout = false) => {
 
 
 const Register = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+    try {
+        // ... (Baaki checks)
 
-    let profileImage = null;
-    if (req.file) {
-      profileImage = req.file.path; // direct cloudinary se URL milta hai
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        // FIX: JWT_SECRET ko trim karein
+        const trimmedSecret = process.env.JWT_SECRET.trim();
+        
+        // 🔑 Token sign karte waqt trimmed secret use karein
+        const token = jwt.sign({ id: user._id, role: user.role }, trimmedSecret, { expiresIn: "1h" }); 
+
+        // ... (res.cookie code)
+    } catch (error) {
+        // ...
     }
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const existingUser = await UserSchema.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // User object ko token sign karne se pehle create karein
-    const user = new UserSchema({
-      name,
-      email,
-      profileImage,
-      password: hashedPassword,
-    });
-    await user.save();
-
-    // FIXED: Token payload should include id and role for full access immediately after register
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-    // FIX APPLIED: Using getCookieOptions
-    res.cookie("token", token, getCookieOptions());
-
-    return res.status(201).json({ message: "User registered successfully", user, token });
-
-  } catch (error) {
-    // Console.log ko return se pehle shift kiya
-    console.log(error.message);
-    return res.status(500).json({ message: "Server Error" });
-  }
 };
 
 const login = async (req, res) => {
-  try {
+    try {
+        // ... (Baaki checks)
 
-    const { email, password } = req.body;
+        const user = await UserSchema.findOne({ email });
+        // ... (Password check)
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+        // FIX: JWT_SECRET ko trim karein
+        const trimmedSecret = process.env.JWT_SECRET.trim();
+        
+        // 🔑 Token sign karte waqt trimmed secret use karein
+        const token = jwt.sign({ id: user._id, role: user.role }, trimmedSecret, { expiresIn: "1h" });
+
+        // ... (res.cookie code)
+    } catch (error) {
+        // ...
     }
-
-    const user = await UserSchema.findOne({ email });
-    if (!user) return res.status(400).json({ message: "User does not exist" });
-
-    const ispasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!ispasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
-
-    // JWT token ko user ki _id aur role ke saath sign karna behtar hai
-    // Taa-ke authMiddleware mein user object (req.user) bana saken.
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-    // FIX APPLIED: Using getCookieOptions
-    res.cookie("token", token, getCookieOptions());
-
-    return res.status(200).json({ message: "Login successful", user, token });
-
-  } catch (error) {
-    console.error("Login API Error:", error);
-    return res.status(500).json({ message: "Server Error" });
-  }
-}
+};
 const getUser = async (req, res) => {
   try {
     const users = await UserSchema.find({})
