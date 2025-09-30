@@ -1,12 +1,21 @@
-import express  from "express";
+import express from "express";
 import isAdmin from "../middleware/isAdmin.js";
 import authMiddleWare from "../middleware/authMiddleware.js";
-import {updateCategory,createCategory,getCategory,deleteCategory} from "../controllers/categoryController.js"
+
+// AGAR AAPKA FOLDER NAAM 'Controllers' HAI:
+import {
+    updateCategory,
+    createCategory,
+    getCategory,
+    deleteCategory
+} from "../Controllers/categoryController.js"; 
+//       ^^^^^^^^^^^^^ <--- C bada rakhein agar folder ka naam 'Controllers' hai
 
 const router = express.Router();
 
-router.post("/createcategory",authMiddleWare,isAdmin,createCategory)
-router.get("/getcategory",getCategory)
-router.delete("/deletecategory/:id",authMiddleWare,isAdmin,deleteCategory)
-router.patch("/updatecategory/:id",authMiddleWare,isAdmin,updateCategory)
-export default router
+router.post("/createcategory", authMiddleWare, isAdmin, createCategory)
+router.get("/getcategory", getCategory)
+router.delete("/deletecategory/:id", authMiddleWare, isAdmin, deleteCategory)
+router.patch("/updatecategory/:id", authMiddleWare, isAdmin, updateCategory)
+
+export default router;
